@@ -1,6 +1,6 @@
-var str = window.location.href;
-var url = new URL(str);
-var idProd = url.searchParams.get("id");
+let str = window.location.href;
+let url = new URL(str);
+let idProd = url.searchParams.get("id");
 fetch("http://localhost:3000/api/products/" + idProd)
 .then((response) => response.json())    
 .then(test => { 
@@ -36,9 +36,9 @@ fetch("http://localhost:3000/api/products/" + idProd)
 document.getElementById("addToCart").addEventListener("click", ajoutPanier);
 
 function ajoutPanier() {
-	var str = window.location.href;
-	var url = new URL(str);
-	var idProd = url.searchParams.get("id");
+	let str = window.location.href;
+	let url = new URL(str);
+	let idProd = url.searchParams.get("id");
 
 	let arrayPanier = [];
     let idProduit = idProd;
@@ -56,15 +56,37 @@ function ajoutPanier() {
 
     if (quantiteProduit != 0 && couleurProduit != 0) 
     {
-	    arrayPanier.push(produitPanier);
-
-	    let panier = JSON.stringify(arrayPanier);
-	    localStorage.setItem("panier", panier);
-
-	    alert("Ajouté au panier !");    
+    	arrayPanier = localStorage.getItem("panier");
+    	console.log(arrayPanier);
+    	// console.log(quantiteProduit, couleurProduit);
+    	if (arrayPanier)
+    	{
+		    const panierPlein = arrayPanier.find(
+          	(panier) => panier.idProduit === produitPanier.idProduit && panier.couleurProduit === produitPanier.couleurProduit
+        	);
+		    if (panierPlein) 
+		    {
+				let nouvelleQty = parseInt(arrayPanier.quantiteProduit) + parseInt(arrayPanier.quantiteProduit);
+	          	arrayPanier.quantiteProduit = nouvelleQty;
+	          	localStorage.setItem("panier", JSON.stringify(arrayPanier));
+	          	alert("Ajouté au panier ! (test1)"); 
+		    }
+		}
+		else
+		{
+			arrayPanier.push(produitPanier);
+			let panier = JSON.stringify(arrayPanier);
+          	localStorage.setItem("panier", panier);
+          	alert("Ajouté au panier ! (test2)"); 
+		}   
 	}
 	else
 	{
-		alert("ajouter le prix et/ou la quantité");
+		arrayPanier = [];
+		arrayPanier.push(produitPanier);
+	    let panier = JSON.stringify(arrayPanier);
+	    localStorage.setItem("panier", panier);
+
+	    alert("Ajouté au panier !"); 
 	}
 }
